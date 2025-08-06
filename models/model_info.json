@@ -1,0 +1,36 @@
+{
+  "model_type": "Logistic Regression",
+  "feature_names": [
+    "radius_mean",
+    "texture_mean",
+    "perimeter_mean",
+    "area_mean",
+    "smoothness_mean",
+    "compactness_mean",
+    "concavity_mean",
+    "symmetry_mean",
+    "fractal_dimension_mean",
+    "radius_se",
+    "texture_se",
+    "perimeter_se",
+    "area_se",
+    "smoothness_se",
+    "compactness_se",
+    "concavity_se",
+    "symmetry_se",
+    "fractal_dimension_se"
+  ],
+  "n_features": 18,
+  "optimal_n_features": 18,
+  "performance": {
+    "accuracy": 0.956140350877193,
+    "roc_auc": 0.9781746031746031,
+    "expected_roc_auc": 0.995,
+    "rank": 1
+  },
+  "hyperparameters": {
+    "C": 10,
+    "penalty": "l2",
+    "solver": "liblinear"
+  }
+}

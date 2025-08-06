@@ -82,7 +82,7 @@ class MLTrainingPipeline:
                 'type': 'ensemble'
             },
             
-            'xgboost': {
+            'gboost': {
                 'model': xgb.XGBClassifier(random_state=self.random_state, eval_metric='logloss'),
                 'params': {
                     'n_estimators': [50, 100, 200],
@@ -144,7 +144,7 @@ class MLTrainingPipeline:
         print()
 
 
-    def quick_model_comparison(self, X_train, y_train, cv_folds=5):
+    def quick_model_comparison(self, x_train, y_train, cv_folds=5):
         """
         Step 2: Quick comparison of all models with default parameters
         Why: Identify which algorithms work well with your data
@@ -164,18 +164,18 @@ class MLTrainingPipeline:
             
             # Cross-validation with multiple metrics
             cv_scores = cross_val_score(
-                model_info['model'], X_train, y_train, 
+                model_info['model'], x_train, y_train, 
                 cv=skf, scoring='roc_auc'
             )
             
             # Additional metrics
             accuracy_scores = cross_val_score(
-                model_info['model'], X_train, y_train, 
+                model_info['model'], x_train, y_train, 
                 cv=skf, scoring='accuracy'
             )
             
             f1_scores = cross_val_score(
-                model_info['model'], X_train, y_train, 
+                model_info['model'], x_train, y_train, 
                 cv=skf, scoring='f1'
             )
             
@@ -205,7 +205,7 @@ class MLTrainingPipeline:
         
         return results_df
     
-    def hyperparameter_tuning(self, X_train, y_train, top_n_models=3, 
+    def hyperparameter_tuning(self, x_train, y_train, top_n_models=3, 
                             search_method='random', n_iter=50, cv_folds=5):
         """
         Step 3: Hyperparameter tuning for top performing models
@@ -219,7 +219,7 @@ class MLTrainingPipeline:
             # If quick_model_comparison() hasn’t been run, do it now
             #  to get performance rankings.
             print("Running quick comparison first...")
-            self.quick_results = self.quick_model_comparison(X_train, y_train)
+            self.quick_results = self.quick_model_comparison(x_train, y_train)
         
         top_models = self.quick_results.head(top_n_models).index.tolist()
         skf = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=self.random_state)
@@ -247,7 +247,7 @@ class MLTrainingPipeline:
                     n_iter=n_iter, random_state=self.random_state
                 )
             
-            search.fit(X_train, y_train)
+            search.fit(x_train, y_train)
             tuning_time = time.time() - start_time
             
             # Store best model
@@ -266,7 +266,7 @@ class MLTrainingPipeline:
         
         print(f"Hyperparameter tuning complete for {len(top_models)} models!")
 
-    def evaluate_models(self, X_train, y_train, X_test, y_test):
+    def evaluate_models(self, x_train, y_train, x_test, y_test):
         """
         Step 4: Comprehensive model evaluation
         Why: Understand model performance from multiple angles
@@ -286,13 +286,13 @@ class MLTrainingPipeline:
             
             # Train model
             start_time = time.time()
-            model.fit(X_train, y_train)
+            model.fit(x_train, y_train)
             training_time = time.time() - start_time
             
             # Predictions
             start_time = time.time()
-            y_pred = model.predict(X_test)
-            y_pred_proba = model.predict_proba(X_test)[:, 1] if hasattr(model, 'predict_proba') else None
+            y_pred = model.predict(x_test)
+            y_pred_proba = model.predict_proba(x_test)[:, 1] if hasattr(model, 'predict_proba') else None
             prediction_time = time.time() - start_time
             
             # Calculate all metrics
@@ -372,7 +372,7 @@ class MLTrainingPipeline:
     Once you internalize this, you'll be able to explain your model with confidence in interviews.
     '''
 
-    def detailed_model_analysis(self, X_train, y_train, X_test, y_test, model_name):
+    def detailed_model_analysis(self, x_train, y_train, x_test, y_test, model_name):
         """
         Step 5: Deep dive analysis of best model
         Why: Understand model behavior, identify potential issues
@@ -385,11 +385,11 @@ class MLTrainingPipeline:
             model = self.best_models[model_name]
         else:
             model = self.models[model_name]['model']
-            model.fit(X_train, y_train)
+            model.fit(x_train, y_train)
         
         # Predictions
-        y_pred = model.predict(X_test)
-        y_pred_proba = model.predict_proba(X_test)[:, 1] if hasattr(model, 'predict_proba') else None
+        y_pred = model.predict(x_test)
+        y_pred_proba = model.predict_proba(x_test)[:, 1] if hasattr(model, 'predict_proba') else None
         
         # Create comprehensive visualization
         fig, axes = plt.subplots(2, 3, figsize=(18, 12))
@@ -436,7 +436,7 @@ class MLTrainingPipeline:
         
         # 4. Feature Importance (if available)
         if hasattr(model, 'feature_importances_'):
-            feature_names = X_train.columns if hasattr(X_train, 'columns') else [f'Feature_{i}' for i in range(X_train.shape[1])]
+            feature_names = x_train.columns if hasattr(x_train, 'columns') else [f'Feature_{i}' for i in range(x_train.shape[1])]
             importance_df = pd.DataFrame({
                 'feature': feature_names,
                 'importance': model.feature_importances_
@@ -449,7 +449,7 @@ class MLTrainingPipeline:
             axes[1, 0].set_xlabel('Importance')
         elif hasattr(model, 'coef_'):
             # For linear models, show coefficient magnitudes
-            feature_names = X_train.columns if hasattr(X_train, 'columns') else [f'Feature_{i}' for i in range(X_train.shape[1])]
+            feature_names = x_train.columns if hasattr(x_train, 'columns') else [f'Feature_{i}' for i in range(x_train.shape[1])]
             coef_df = pd.DataFrame({
                 'feature': feature_names,
                 'coefficient': np.abs(model.coef_[0])
@@ -463,7 +463,7 @@ class MLTrainingPipeline:
         
         # 5. Learning Curve
         train_sizes, train_scores, val_scores = learning_curve(
-            model, X_train, y_train, cv=5, n_jobs=-1, 
+            model, x_train, y_train, cv=5, n_jobs=-1, 
             train_sizes=np.linspace(0.1, 1.0, 10), scoring='roc_auc'
         )
         '''
@@ -575,7 +575,7 @@ class MLTrainingPipeline:
             print(f"Model {model_name} not found in best_models")
 
 
-    def complete_ml_pipeline(self, X_train, y_train, X_test, y_test, 
+    def complete_ml_pipeline(self, x_train, y_train, x_test, y_test, 
                            tune_hyperparameters=True, save_model=True, 
                            model_save_path='best_model.joblib'):
         """
@@ -588,19 +588,19 @@ class MLTrainingPipeline:
         self.initialize_models()
         
         # Step 2: Quick comparison
-        self.quick_results = self.quick_model_comparison(X_train, y_train)
+        self.quick_results = self.quick_model_comparison(x_train, y_train)
         
         # Step 3: Hyperparameter tuning (optional)
         if tune_hyperparameters:
-            self.hyperparameter_tuning(X_train, y_train, top_n_models=3)
+            self.hyperparameter_tuning(x_train, y_train, top_n_models=3)
         
         # Step 4: Final evaluation
-        final_results = self.evaluate_models(X_train, y_train, X_test, y_test)
+        final_results = self.evaluate_models(x_train, y_train, x_test, y_test)
         
         # Step 5: Detailed analysis of best model
         best_model_name = final_results.index[0]
 
-        best_model = self.detailed_model_analysis(X_train, y_train, X_test, y_test, best_model_name)
+        best_model = self.detailed_model_analysis(x_train, y_train, x_test, y_test, best_model_name)
         
         # Step 6: Save best model
         if save_model:

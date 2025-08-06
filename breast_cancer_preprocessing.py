@@ -1,4 +1,3 @@
-from breast_cancer_eda import load_data
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler
@@ -12,11 +11,6 @@ import scipy as stats
 import warnings
 warnings.filterwarnings('ignore')
 
-
-path = r"C:\Desktop\BREAST CANCER PREDICTOR\Breast_cancer_dataset.csv"
-
-df = pd.read_csv(path)
-df = load_data(path)
 
 class BreastCancerPreprocessor:
     """
@@ -209,6 +203,8 @@ class BreastCancerPreprocessor:
         # fitting only on training data to prevent data leakage
         x_train_scaled = self.scaler.fit_transform(x_train)
         x_test_scaled = self.scaler.transform(x_test)
+        import joblib
+        joblib.dump(self.scaler, r'C:\Desktop\BREAST CANCER PREDICTOR\models\scaler.joblib')
 
         # converting back to a dataframe to maintain column names
         x_train_scaled = pd.DataFrame(x_train_scaled, columns=x_train.columns, index=x_train.index)

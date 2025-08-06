@@ -1,7 +1,7 @@
 # Semi-Advanced EDA
 import pandas as pd
 
-path = r"C:\Desktop\BREAST CANCER PREDICTOR\Breast_cancer_dataset.csv"
+path = r"C:\Desktop\BREAST CANCER PREDICTOR\data\Breast_cancer_dataset.csv"
 def load_data(path):
     df = pd.read_csv(path)
 
