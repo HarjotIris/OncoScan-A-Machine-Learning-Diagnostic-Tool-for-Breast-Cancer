@@ -641,7 +641,7 @@ def about_page():
     
     ---
     
-    **Built with ❤️ using Python and Streamlit**
+    **✨ Built with ❤️ (and Python) by Harjot / Iris. Thank you for visiting.**
     """)
 
 if __name__ == "__main__":
