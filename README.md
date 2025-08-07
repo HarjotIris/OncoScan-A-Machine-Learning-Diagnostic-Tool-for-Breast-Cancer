@@ -110,13 +110,14 @@ streamlit run streamlit_app.py
 
 ## 📊 Sample Visualizations
 
-| Model Comparison | Diagnosis Class Distribution |
-| ---------------- | ---------------------------- |
-|                  |                              |
+| ![](results/Model_Comparison.png) | ![](results/class%20distribution%20of%20diagnosis.png) |
+| --------------------------------- | -------------------------------------------------------- |
+| Model Comparison                  | Diagnosis Class Distribution                             |
 
-| Correlation Heatmap | Pairplot |
-| ------------------- | -------- |
-|                     |          |
+| ![](results/heatmap%20of%20correlation%20matrix.png) | ![](results/pairplot.png)         |
+| ---------------------------------------------------- | --------------------------------- |
+| Correlation Heatmap                                  | Pairplot                          |
+
 
 ---
 
