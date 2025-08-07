@@ -10,6 +10,10 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import warnings
 warnings.filterwarnings('ignore')
+from pathlib import Path
+BASE_DIR = Path(__file__).parent
+MODELS_DIR = BASE_DIR / "models"
+
 
 # Page configuration
 st.set_page_config(
@@ -66,8 +70,8 @@ class BreastCancerPredictor:
         self.feature_names = self.load_feature_names()
 
         try:
-            self.model = joblib.load(r'C:\Desktop\BREAST CANCER PREDICTOR\models\best_breast_cancer_model.joblib')
-            self.scaler = joblib.load(r'C:\Desktop\BREAST CANCER PREDICTOR\models\feature_scaler.joblib')
+            self.model = joblib.load(MODELS_DIR / 'best_breast_cancer_model.joblib')
+            self.scaler = joblib.load(MODELS_DIR / 'feature_scaler.joblib')
 
             if not hasattr(self.scaler, "mean_"):
                 raise ValueError("Scaler is not fitted.")
@@ -81,7 +85,7 @@ class BreastCancerPredictor:
 
     def load_feature_names(self):
         try:
-            with open(r'C:\Desktop\BREAST CANCER PREDICTOR\models\model_info.json', 'r') as f:
+            with open(MODELS_DIR / 'model_info.json', 'r') as f:
                 data = json.load(f)
             return data.get('feature_names', [])
         except Exception as e:

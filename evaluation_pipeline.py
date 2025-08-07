@@ -1,3 +1,8 @@
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
+MODELS_DIR = BASE_DIR / "models"
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -555,7 +560,7 @@ class MLTrainingPipeline:
         """
         if model_name in self.best_models:
             model = self.best_models[model_name]
-            joblib.dump(model, filepath)
+            joblib.dump(model, MODELS_DIR / filepath)
             print(f"Model saved: {filepath}")
             
             # Save model metadata
@@ -566,9 +571,9 @@ class MLTrainingPipeline:
                 'performance_metrics': self.results.loc[model_name].to_dict() if hasattr(self, 'results') else {}
             }
             
-            metadata_filepath = filepath.replace('.joblib', '_metadata.json')
+            metadata_filepath = (MODELS_DIR / filepath).with_name(filepath.replace('.joblib', '_metadata.json'))
             import json
-            with open(metadata_filepath, 'w') as f:
+            with open(MODELS_DIR / "model_info.json", 'w') as f:
                 json.dump(metadata, f, indent=2, default=str)
             print(f"Metadata saved: {metadata_filepath}")
         else:

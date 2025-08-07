@@ -1,15 +1,27 @@
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler
-from sklearn.feature_selection import SelectKBest, f_classif, RFE
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
-import seaborn as sns
-import scipy as stats
 import warnings
 warnings.filterwarnings('ignore')
+from pathlib import Path
+BASE_DIR = Path(__file__).parent
+MODELS_DIR = BASE_DIR / "models"
+MODELS_DIR.mkdir(exist_ok=True)
+
+try:
+    import pandas as pd
+    import numpy as np
+    from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler
+    from sklearn.feature_selection import SelectKBest, f_classif, RFE
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.model_selection import train_test_split
+    from sklearn.decomposition import PCA
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import scipy.stats as stats
+    import joblib
+    import os
+    import streamlit as st
+except ImportError as e:
+    st.error(f"Missing required package: {e}")
+    st.stop()
 
 
 class BreastCancerPreprocessor:
@@ -204,7 +216,9 @@ class BreastCancerPreprocessor:
         x_train_scaled = self.scaler.fit_transform(x_train)
         x_test_scaled = self.scaler.transform(x_test)
         import joblib
-        joblib.dump(self.scaler, r'C:\Desktop\BREAST CANCER PREDICTOR\models\scaler.joblib')
+        import os
+        joblib.dump(self.scaler, MODELS_DIR / 'scaler.joblib')
+
 
         # converting back to a dataframe to maintain column names
         x_train_scaled = pd.DataFrame(x_train_scaled, columns=x_train.columns, index=x_train.index)
@@ -226,6 +240,7 @@ class BreastCancerPreprocessor:
         - RFE: Recursive Feature Elimination (model-based)
         - Feature importance from tree models
         """
+        joblib.dump(self.scaler, MODELS_DIR / 'scaler.joblib')
 
         print(f"Feature Selection : Method : {method}, k : {k}")
         if method == 'selectkbest':

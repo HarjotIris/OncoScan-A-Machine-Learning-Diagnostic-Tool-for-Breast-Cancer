@@ -23,8 +23,11 @@ def main():
     
     # Step 1: Load and basic prep
     print("\n1. LOADING DATA")
-    path = r"C:\Desktop\BREAST CANCER PREDICTOR\data\Breast_cancer_dataset.csv"
-    df = pd.read_csv(path)
+    from pathlib import Path
+    BASE_DIR = Path(__file__).parent
+    DATA_PATH = BASE_DIR / "data" / "Breast_cancer_dataset.csv"
+    df = pd.read_csv(DATA_PATH)
+
 
     # Basic cleaning (from your EDA)
     df = df.drop(columns=['id', 'Unnamed: 32'], errors='ignore')
@@ -57,7 +60,8 @@ def main():
         y_test=y_test,
         tune_hyperparameters=True,  # Set False for quick testing
         save_model=True,
-        model_save_path= r'C:\Desktop\BREAST CANCER PREDICTOR\models\best_model.joblib'
+        model_save_path = "best_model.joblib"  # only filename, directory is handled by pipeline
+
 
     )
 
@@ -105,9 +109,11 @@ def experiment_with_different_configs():
     print("="*60)
     
     # Load data once
-    path = r"C:\Desktop\BREAST CANCER PREDICTOR\data\Breast_cancer_dataset.csv"
+    from pathlib import Path
+    BASE_DIR = Path(__file__).parent
+    DATA_PATH = BASE_DIR / "data" / "Breast_cancer_dataset.csv"
+    df = pd.read_csv(DATA_PATH)
 
-    df = pd.read_csv(path)
     df = df.drop(columns=['id', 'Unnamed: 32'], errors='ignore')
     df['diagnosis'] = df['diagnosis'].map({"M": 1, "B": 0})
     

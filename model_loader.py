@@ -12,6 +12,13 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import warnings
 warnings.filterwarnings('ignore')
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
+DATA_PATH = BASE_DIR / "data" / "Breast_cancer_dataset.csv"
+MODELS_DIR = BASE_DIR / "models"
+MODELS_DIR.mkdir(exist_ok=True)
+
 
 def create_deployment_model():
     """
@@ -26,8 +33,7 @@ def create_deployment_model():
     
     # Load and prepare data (same as your main pipeline)
     try:
-        path = r"C:\Desktop\BREAST CANCER PREDICTOR\data\Breast_cancer_dataset.csv"
-        df = pd.read_csv(path)
+        df = pd.read_csv(DATA_PATH)
         
         # Basic preprocessing
         df = df.drop(columns=['id', 'Unnamed: 32'], errors='ignore')
@@ -85,8 +91,8 @@ def create_deployment_model():
         print(f"ROC-AUC: {roc_auc:.4f} (Expected: ~99.5%)")
         
         # Save model and scaler
-        joblib.dump(model, r'C:\Desktop\BREAST CANCER PREDICTOR\models\best_breast_cancer_model.joblib')
-        joblib.dump(scaler, r'C:\Desktop\BREAST CANCER PREDICTOR\models\feature_scaler.joblib')
+        joblib.dump(model, MODELS_DIR / 'best_breast_cancer_model.joblib')
+        joblib.dump(scaler, MODELS_DIR / 'feature_scaler.joblib')
         
         # Save feature names (20 optimal features)
         feature_info = {
@@ -108,7 +114,7 @@ def create_deployment_model():
         }
         
         import json
-        with open(r'C:\Desktop\BREAST CANCER PREDICTOR\models\model_info.json', 'w') as f:
+        with open(MODELS_DIR / 'model_info.json', 'w') as f:
 
             json.dump(feature_info, f, indent=2)
         
@@ -136,8 +142,8 @@ def create_deployment_model():
         model.fit(X_scaled, y_dummy)
         
         # Save dummy model
-        joblib.dump(model, r'C:\Desktop\BREAST CANCER PREDICTOR\models\best_breast_cancer_model.joblib')
-        joblib.dump(scaler, r'C:\Desktop\BREAST CANCER PREDICTOR\models\feature_scaler.joblib')
+        joblib.dump(model, MODELS_DIR / 'best_breast_cancer_model.joblib')
+        joblib.dump(scaler, MODELS_DIR / 'feature_scaler.joblib')
         
         important_features = [
             'radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean',
@@ -157,7 +163,7 @@ def create_deployment_model():
         }
         
         import json
-        with open(r'C:\Desktop\BREAST CANCER PREDICTOR\models\model_info.json', 'w') as f:
+        with open(MODELS_DIR / 'model_info.json', 'w') as f:
             json.dump(feature_info, f, indent=2)
         
         print("✅ Demo model created successfully!")
